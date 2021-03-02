@@ -1,43 +1,39 @@
+#include <iostream>
+#include <fstream>
 #include <stdio.h>
 #include <string>
 #include <pb_encode.h>
 #include <pb_decode.h>
-#include "simple.pb.h"
+#include "image.pb.h"
 #include "pb_wrapper.h"
+#include "crc.h"
 
-int main()
+int main(int argc, char* argv[])
 {
-    /* This is the buffer where we will store our message. */
-    std::string serialized_message;
-    
-    /* Encode our message */
+    if (argc != 2)
     {
-        /* Allocate space on the stack to store the message data.
-         *
-         * Nanopb generates simple struct definitions for all the messages.
-         * - check out the contents of simple.pb.h!
-         * It is a good idea to always initialize your structures
-         * so that you do not have garbage data from RAM in there.
-         */
-        SimpleMessage message = SimpleMessage_init_zero;
-        
-        /* Fill in the lucky number */
-        message.lucky_number = 13;
-        
-        serialized_message = NanoPBSerialize(message, SimpleMessage_fields);
+        std::cout << "Usage: ./image binarydata" << std::endl;
+        return 1;
     }
-    
-    /* Now we could transmit the message over network, store it in a file or
-     * wrap it to a pigeon's leg.
-     */
 
-    /* But because we are lazy, we will just decode it immediately. */
-    
+    std::ifstream binarydata;
+    binarydata.open(argv[1]);
+    gridware_FirmwareImagePage image;
+    while(!binarydata.eof())
     {
-        SimpleMessage message = NanoPBParse<SimpleMessage>(serialized_message, SimpleMessage_fields);
-        
-        /* Print the data contained in the message. */
-        printf("Your lucky number was %d!\n", message.lucky_number);
+        binarydata.read(reinterpret_cast<char*>(&image.page.bytes), 2048);
+        std::streamsize s = binarydata.gcount();
+        if (s == 0)
+        {
+            break;
+        }
+        image.page.size = s;
+        std::cout << "read 1 chunk size = " << s << "\n";
+        crc(reinterpret_cast<unsigned char*>(&image.page.bytes), s, reinterpret_cast<unsigned char*>(&image.crc.bytes));
+        image.crc.size = 2;
+        image.last = binarydata.eof();
+        std::string serialized_image = NanoPBSerialize(image, gridware_FirmwareImagePage_fields);
+        std::cout << serialized_image;
     }
     
     return 0;

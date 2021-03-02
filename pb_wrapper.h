@@ -6,36 +6,6 @@
 #include <stdio.h>
 #include <string>
 
-/*
-template<class T>
-struct NanoPBSerializer
-{
-    NanoPBSerializer(uint8_t* buf_, size_t size_)
-        : buf{buf_}, size{size_}
-    {
-    }
-
-    template<class Tfields>
-    bool write(T const& a, Tfields fields)
-    {
-        ostream = pb_ostream_from_buffer(buf, size);
-        return pb_encode(&ostream, fields, &a);
-    }
-
-    template<class Tfields>
-    bool read(T& result, Tfields fields)
-    {
-        istream = pb_istream_from_buffer(buf, size);
-        return pb_decode(&istream, fields, &result);
-    }
-    pb_byte_t* buf;
-    size_t size;
-    pb_ostream_t ostream;
-    pb_istream_t istream;
-};
-*/
-
-
 class SerializeException : public std::exception
 {
 public:

@@ -22,5 +22,4 @@ message FirmwareImagePage {
 message DeviceResponse {
     // Whether or not the image was received and the CRC verified
     bool verified = 1;
-    bytes page = 2;
 }
