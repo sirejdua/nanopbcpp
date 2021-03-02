@@ -1,0 +1,26 @@
+syntax = 
+"proto3";
+
+
+import "nanopb.proto";
+
+package
+gridware;
+// The server sends multiple chunks of a new firmware binary to the device
+// who programs its own flash memory with the new application image.
+message FirmwareImagePage { 
+    // One page of the new firmware image.
+    bytes page = 1 [(nanopb).max_size = 2048];
+    // CRC of the data to check for integrity
+    bytes crc = 2 [(nanopb).max_size = 2];
+    // Whether or not this is the last page to come.
+    bool last = 3;
+}
+
+// The device sends back a response for each message, describing whether
+// or not the received CRC was correct. 
+message DeviceResponse {
+    // Whether or not the image was received and the CRC verified
+    bool verified = 1;
+    bytes page = 2;
+}
