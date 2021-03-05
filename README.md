@@ -45,12 +45,3 @@ make test_simple
 `make test_simple` exhibits typical usage of the NanoPB wrapper API, and just serializes and parses a single object.
 
 `make test_image` uses the `image.proto` protobuf generation and simulates an image transfer between a server thread and a device thread. It uses random data to fill in the firmware image file `binarytestdata`, and the server thread reads this file in 2048 byte chunks to fill a `FirmwareImagePage` protobuf, along with its crc. It communicates to the device thread over a pipe, and the device thread reads each `FirmwareImagePage`, checks the crc, and writes the result to the output file `binarytestdata.out`. When every chunk has been read, the process terminates and the test is verified for success by comparing the input `binarytestdata` with the output `binarytestdata.out`; these need to be the same.
-
-
-```bash
-import foobar
-
-foobar.pluralize('word') # returns 'words'
-foobar.pluralize('goose') # returns 'geese'
-foobar.singularize('phenomena') # returns 'phenomenon'
-```
